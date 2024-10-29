@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+    networks:
+      - jtms-network
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}"
+      PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_DEFAULT_PASSWORD:-admin}"
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - jtms-network
+    restart: unless-stopped
+
+  user-service:
+    depends_on:
+      - postgres
+    image: manuellarbi/jtms-user-service:base
+    container_name: user-service
+    # ports:
+    #   - "3000:3000"
+    # environment:
+    #   - BPL_JVM_THREAD_COUNT=50
+    #   - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/user
+    #   - BPL_DEBUG_ENABLED=true
+    #   - BPL_DEBUG_PORT=8001
+    # networks:
+    #   - jtms-network
+    # restart: unless-stopped
+
+
+  gateway-service:
+    image: manuellarbi/jtms-api-gateway:base
+    container_name: api-gateway
+    # ports:
+    #   - "3000:3000"
+    # networks:
+    #   - jtms-network
+    # restart: unless-stopped
+
+
+  discovery-service:
+    image: manuellarbi/jtms-service-discovery:base
+    container_name: discovery-service
+    # ports:
+    #   - "3000:3000"
+    # networks:
+    #   - jtms-network
+    # restart: unless-stopped
+
+  assessment-service:
+    depends_on:
+      - postgres
+    image: zena07/assessment-service:latest
+    container_name: assessment-service
+    ports:
+      - "3000:3000"
+    environment:
+      - BPL_JVM_THREAD_COUNT=50
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/assessment
+      - BPL_DEBUG_ENABLED=true
+    networks:
+      - jtms-network
+    restart: unless-stopped
+
+
+  curriculum-service:
+    depends_on:
+      - postgres
+    image: elitekaycy/curriculum:latest
+    container_name: curriculum-service
+    # ports:
+    #   - "4000:4000"
+    # environment:
+    #   - BPL_JVM_THREAD_COUNT=50
+    #   - CLOUDINARY_URL=cloudinary://722349448462417:K4PnuuNAC-S4S0ntHALPzbFx_20@dsvfnjavd
+    #   - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/assessment
+    #   - BPL_DEBUG_ENABLED=true
+    networks:
+      - jtms-network
+    restart: unless-stopped
+
+networks:
+  jtms-network:
+    driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:
