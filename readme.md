@@ -1,5 +1,18 @@
 # JTMS Docker Compose Setup
 
+## Prerequisites
+
+Before running the Docker Compose setup, you need to configure your environment variables. Create a `.env` file in the root of your project with the following variables:
+
+```env
+MAIL_USERNAME=
+MAIL_PASSWORD=
+SENTRY_DSN=
+JWT_SECRET=
+CLOUDINARY_URL=
+```
+
+
 ## Running the Services
 
 To run the entire setup, use Docker Compose. Follow these simple steps:
