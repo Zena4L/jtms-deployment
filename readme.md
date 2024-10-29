@@ -13,13 +13,16 @@ CLOUDINARY_URL=
 ```
 
 
+
 ## Running the Services
 
 To run the entire setup, use Docker Compose. Follow these simple steps:
 
 1. **Start the Services:**
    ```bash
-   docker-compose up -d
+   docker-compose up -d # running the services for the first time
+
+   docker-compose up --build # when running the service after changes to the docker compose
 
 
 ## Accessing the Services
