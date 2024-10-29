@@ -92,7 +92,7 @@ services:
     #   - "4000:4000"
     # environment:
     #   - BPL_JVM_THREAD_COUNT=50
-    #   - CLOUDINARY_URL=cloudinary://722349448462417:K4PnuuNAC-S4S0ntHALPzbFx_20@dsvfnjavd
+    #   - CLOUDINARY_URL=
     #   - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/assessment
     #   - BPL_DEBUG_ENABLED=true
     networks:
