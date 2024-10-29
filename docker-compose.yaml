@@ -34,38 +34,60 @@ services:
   user-service:
     depends_on:
       - postgres
+      - discovery-service
     image: manuellarbi/jtms-user-service:base
     container_name: user-service
-    # ports:
-    #   - "3000:3000"
-    # environment:
-    #   - BPL_JVM_THREAD_COUNT=50
-    #   - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/user
-    #   - BPL_DEBUG_ENABLED=true
-    #   - BPL_DEBUG_PORT=8001
-    # networks:
-    #   - jtms-network
-    # restart: unless-stopped
+    ports:
+      - "4400:4400"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jtms_user_management_service
+      - SERVER_PORT=4400
+      - MAILHOST=sandbox.smtp.mailtrap.io
+      - MAIL_PORT=2525
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - SERVICE_EMAIL=jtms@mail.com
+      - SENTRY_DSN=${SENTRY_DSN}
+      - SENTRY_SAMPLE_RATE=1.0
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION_TIME=14400000
+      - EUREKA_SERVER_URL=http://discovery-service:8761/eureka
+      - FRONT_END_BASE_URL=http://localhost:4200
+      - FRONTEND_LOGIN_ROUTE=/login
+      - FRONTEND_RESET_PASSWORD_ROUTE=/password-update
+      - APP_NAME="JTMS User Management Service"
+    networks:
+      - jtms-network
+    restart: unless-stopped
 
 
   gateway-service:
     image: manuellarbi/jtms-api-gateway:base
     container_name: api-gateway
-    # ports:
-    #   - "3000:3000"
-    # networks:
-    #   - jtms-network
-    # restart: unless-stopped
+    ports:
+      - "4000:2024"
+    depends_on:
+      - discovery-service
+    environment:
+      - APPLICATION_NAME="JTMS-API-Gateway-Service"
+      - SERVER_PORT=2024
+      - JWT_SECRET=${JWT_SECRET}
+      - EUREKA_SERVER_URL=http://discovery-service:8761/eureka
+    networks:
+      - jtms-network
+    restart: unless-stopped
 
 
   discovery-service:
     image: manuellarbi/jtms-service-discovery:base
     container_name: discovery-service
-    # ports:
-    #   - "3000:3000"
-    # networks:
-    #   - jtms-network
-    # restart: unless-stopped
+    ports:
+      - "4001:4001"
+    environment:
+      - SERVER_PORT=4001
+    networks:
+      - jtms-network
+    restart: unless-stopped
 
   assessment-service:
     depends_on:
@@ -73,11 +95,15 @@ services:
     image: zena07/assessment-service:latest
     container_name: assessment-service
     ports:
-      - "3000:3000"
+      - "4002:4002"
     environment:
-      - BPL_JVM_THREAD_COUNT=50
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/assessment
-      - BPL_DEBUG_ENABLED=true
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - DB_HOST=localhost
+      - DB_PORT=5431
+      - DB=assessment
+      - PORT=4002
     networks:
       - jtms-network
     restart: unless-stopped
@@ -88,13 +114,15 @@ services:
       - postgres
     image: elitekaycy/curriculum:latest
     container_name: curriculum-service
-    # ports:
-    #   - "4000:4000"
-    # environment:
-    #   - BPL_JVM_THREAD_COUNT=50
-    #   - CLOUDINARY_URL=cloudinary://722349448462417:K4PnuuNAC-S4S0ntHALPzbFx_20@dsvfnjavd
-    #   - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/assessment
-    #   - BPL_DEBUG_ENABLED=true
+    ports:
+      - "4003:4003"
+    environment:
+      - CLOUDINARY_URL=${CLOUDINARY_URL}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/curriculum_db
+      - SENTRY_DSN=${SENTRY_DSN}
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SERVER_PORT=4003
     networks:
       - jtms-network
     restart: unless-stopped
