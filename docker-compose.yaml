@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     container_name: postgres
@@ -24,7 +22,7 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: "${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}"
       PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_DEFAULT_PASSWORD:-admin}"
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
       - pgadmin:/var/lib/pgadmin
     ports:
@@ -64,7 +62,6 @@ services:
       - jtms-network
     restart: unless-stopped
 
-
   gateway-service:
     image: manuellarbi/jtms-api-gateway:base
     container_name: api-gateway
@@ -80,7 +77,6 @@ services:
     networks:
       - jtms-network
     restart: unless-stopped
-
 
   discovery-service:
     image: manuellarbi/jtms-service-discovery:base
@@ -113,7 +109,6 @@ services:
       - jtms-network
     restart: unless-stopped
 
-
   curriculum-service:
     depends_on:
       - postgres
@@ -128,6 +123,9 @@ services:
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=password
       - SERVER_PORT=4003
+      - EUREKA_SERVER_URL=http://discovery-service:8761/eureka
+      - APP_NAME=jtms-curriculum-service
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - jtms-network
     restart: unless-stopped
