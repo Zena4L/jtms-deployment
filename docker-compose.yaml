@@ -57,7 +57,8 @@ services:
       - FRONT_END_BASE_URL=http://localhost:4200
       - FRONTEND_LOGIN_ROUTE=/login
       - FRONTEND_RESET_PASSWORD_ROUTE=/password-update
-      - APP_NAME="JTMS User Management Service"
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
     networks:
       - jtms-network
     restart: unless-stopped
@@ -70,7 +71,6 @@ services:
     depends_on:
       - discovery-service
     environment:
-      - APPLICATION_NAME="JTMS-API-Gateway-Service"
       - SERVER_PORT=2024
       - JWT_SECRET=${JWT_SECRET}
       - EUREKA_SERVER_URL=http://discovery-service:8761/eureka
