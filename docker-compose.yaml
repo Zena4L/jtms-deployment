@@ -66,7 +66,7 @@ services:
       - EUREKA_ENABLED=true
     networks:
       - jtms-network
-  #    restart: unless-stopped
+    restart: unless-stopped
 
 
   gateway-service:
