@@ -131,7 +131,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
       - SERVER_PORT=4003
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_APPLICATION_NAME="jtms-curriculum-service"
+      - SPRING_APPLICATION_NAME=jtms-curriculum-service
     networks:
       - jtms-network
     restart: unless-stopped
