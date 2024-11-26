@@ -13,7 +13,7 @@ services:
       - postgres:/var/lib/postgresql/data
       - "./docker-entrypoint/init.sh:/docker-entrypoint-initdb.d/init.sh"
     ports:
-      - "5431:5432"
+      - "5432:5432"
     networks:
       - jtms-network
     restart: unless-stopped
@@ -37,11 +37,12 @@ services:
     depends_on:
       - postgres
       - discovery-service
-    image: manuellarbi/jtms-user-service:base
+    image: zena07/jtms_user:latest
     container_name: user-service
     ports:
       - "4400:4400"
     environment:
+      - SPRING_DATASOURCE_HIKARI_JDBC_URL=jdbc:postgresql://postgres:5432/jtms_user_management_service
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jtms_user_management_service
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=password
@@ -60,13 +61,16 @@ services:
       - FRONTEND_LOGIN_ROUTE=/login
       - FRONTEND_RESET_PASSWORD_ROUTE=/password-update
       - APP_NAME="JTMS User Management Service"
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
+      - EUREKA_ENABLED=true
     networks:
       - jtms-network
-    restart: unless-stopped
+  #    restart: unless-stopped
 
 
   gateway-service:
-    image: manuellarbi/jtms-api-gateway:base
+    image: elitekaycy/jtms:api-gateway
     container_name: api-gateway
     ports:
       - "4000:2024"
@@ -80,7 +84,6 @@ services:
     networks:
       - jtms-network
     restart: unless-stopped
-
 
   discovery-service:
     image: manuellarbi/jtms-service-discovery:base
