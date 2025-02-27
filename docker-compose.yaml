@@ -69,7 +69,7 @@ services:
     restart: unless-stopped
 
   gateway-service:
-    image: elitekaycy/jtms:api-gateway
+    image: elitekaycy/jtms-api-gateway:latest
     container_name: api-gateway
     ports:
       - "4000:2024"
